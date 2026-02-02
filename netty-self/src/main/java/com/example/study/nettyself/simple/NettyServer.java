@@ -70,6 +70,14 @@ public class NettyServer {
             // ========== 绑定端口并启动服务 ==========
             // bind()：绑定端口（非阻塞），sync()：阻塞等待绑定完成
             ChannelFuture future = serverBootstrap.bind(port).sync();
+            // 异步监听
+            future.addListener(future1 -> {
+                if (future1.isSuccess()) {
+                    System.out.println("服务端启动成功！");
+                } else {
+                    System.out.println("服务端启动失败！");
+                }
+            });
 
             // ========== 等待服务端通道关闭 ==========
             // closeFuture()：获取通道的关闭未来对象，sync()：阻塞等待服务端通道关闭（如手动停止）

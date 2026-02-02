@@ -3,6 +3,8 @@ package com.example.study.nettyself.simple;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Netty服务端消息处理器
  * 继承SimpleChannelInboundHandler<String>：泛型指定处理的消息类型为String
@@ -33,6 +35,24 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
         // 服务端回复客户端（异步发送，不会阻塞当前线程）
         String response = "服务端已收到消息：" + msg + "，当前时间戳：" + System.currentTimeMillis();
         ctx.writeAndFlush(response); // write：写入缓冲区，flush：刷新缓冲区（发送消息）
+
+        ctx.channel().eventLoop().execute(() -> {
+            System.out.println("异步执行任务");
+            try {
+                Thread.sleep(2000);
+                ctx.writeAndFlush("[耗时任务]执行的结果");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("异步任务结束");
+
+        });
+        // schedule：延迟执行任务
+        ctx.channel().eventLoop().schedule(() -> {
+            System.out.println("定时任务开始执行");
+            ctx.writeAndFlush("[定时任务]执行结果");
+            System.out.println("定时任务结束");
+        },4, TimeUnit.SECONDS);
     }
 
     /**
