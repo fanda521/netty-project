@@ -1,6 +1,5 @@
-package com.example.study.nettyself.simple;
+package com.example.study.nettyself.protobuf;
 
-import com.example.study.nettyself.protobuf.StudentPOJO;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -11,8 +10,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
 
 /**
  * Netty 4.x 服务端核心启动类
@@ -59,10 +56,8 @@ public class NettyServer {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             // 获取通道的处理器链（Pipeline），Netty的核心设计：责任链模式
                             ch.pipeline()
-                                    // 字符串解码器：将ByteBuf（Netty字节缓冲区）解码为String
-                                    .addLast(new StringDecoder())
-                                    // 字符串编码器：将String编码为ByteBuf
-                                    .addLast(new StringEncoder())
+                                    .addLast("protobufEn",new ProtobufEncoder())
+                                    .addLast("protobufDe", new ProtobufDecoder(StudentPOJO.Student.getDefaultInstance()))
                                     // 自定义业务处理器：处理客户端消息
                                     .addLast(new ServerHandler());
                         }

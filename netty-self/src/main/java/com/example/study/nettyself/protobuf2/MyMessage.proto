@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option java_package = "com.example.study.nettyself.protobuf2";
+option java_outer_classname = "MyMessagePOJO";
+
+message MyMessage {
+
+  enum DataType {
+    PersonType = 0;
+    WorkerType = 1;
+  }
+
+  oneof data {
+    Person person = 1;
+    Worker worker = 2;
+  }
+
+  DataType data_type = 3;
+}
+
+message Person {
+  string name = 1;
+  int32 id = 2;
+}
+
+message Worker {
+  string name = 1;
+  int32 age = 2;
+}

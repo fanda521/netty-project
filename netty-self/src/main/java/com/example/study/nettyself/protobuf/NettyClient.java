@@ -1,19 +1,12 @@
-package com.example.study.nettyself.simple;
+package com.example.study.nettyself.protobuf;
 
-import com.example.study.nettyself.protobuf.StudentPOJO;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
 
 import java.util.Scanner;
 
@@ -55,10 +48,8 @@ public class NettyClient {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline()
-                                    // 字符串解码器
-                                    .addLast(new StringDecoder())
-                                    // 字符串编码器
-                                    .addLast(new StringEncoder())
+                                    .addLast("protobufEn",new ProtobufEncoder())
+                                    .addLast("protobufDe", new ProtobufDecoder(StudentPOJO.Student.getDefaultInstance()))
                                     // 自定义客户端处理器
                                     .addLast(new ClientHandler());
                         }
@@ -80,7 +71,8 @@ public class NettyClient {
                     break;
                 }
                 // 发送消息到服务端
-                channel.writeAndFlush(msg);
+                StudentPOJO.Student.Builder student = StudentPOJO.Student.newBuilder().setId(2).setName(msg);
+                channel.writeAndFlush(student);
             }
 
             // 等待通道关闭
