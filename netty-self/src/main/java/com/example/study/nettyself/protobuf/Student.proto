@@ -1,0 +1,8 @@
+syntax = "proto3";// 指定proto3语法
+option java_outer_classname = "StudentPOJO";// 指定外部类名
+
+// 定义Student
+message Student {// 会在StudentPOJO类中生成内部类 Student，它是真正的数据模型
+  int32 id = 1;// 1表示id字段编号，表示id字段编号是1
+  string name = 2;// 2表示name字段编号，表示name字段编号是2
+}

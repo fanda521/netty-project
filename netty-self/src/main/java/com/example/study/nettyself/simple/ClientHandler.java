@@ -1,5 +1,6 @@
 package com.example.study.nettyself.simple;
 
+import com.example.study.nettyself.protobuf.StudentPOJO;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
