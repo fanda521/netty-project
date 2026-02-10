@@ -202,15 +202,13 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
         // 3. 推送消息给当前节点的该聊天室用户（精准推送）
         String msgJson = JsonUtil.toJson(chatMessage);
+        String senderId = chatMessage.getSenderId();
         Set<Object> userIds = redisTemplate.opsForSet().members(REDIS_KEY_ROOM_USERS + roomId);
-        if (userIds != null && !userIds.isEmpty()) {
-            for (Object userIdObj : userIds) {
-                String userId = userIdObj.toString();
-                Channel channel = channelManager.getChannelByUserId(userId);
-                if (channel != null && channel.isActive()) {
-                    channel.writeAndFlush(msgJson);
-                    log.info("本地消息推送给聊天室{}的用户{}：{}", roomId, userId, msgJson);
-                }
+        if (userIds != null && !userIds.isEmpty() && userIds.contains(senderId)) {
+            Channel channel = channelManager.getChannelByUserId(senderId);
+            if (channel != null && channel.isActive()) {
+                channel.writeAndFlush(msgJson);
+                log.info("本地消息推送给聊天室{}的用户{}：{}", roomId, senderId, msgJson);
             }
         }
 
